@@ -68,8 +68,10 @@ def main():
             # Exclude previous_result from random selection to avoid duplicates
             available_words = set(all_words) - {previous_result}
             words = np.random.choice(list(available_words), 9, replace=False)
-            words = np.append(words, previous_result)  # Add previous_result to make 10 words
-            np.random.shuffle(words)  # Shuffle to randomize the position
+            # Add the previous_result at the beginning of the list
+            words = np.insert(words, 0, previous_result)
+            # words = np.append(words, previous_result)  # Add previous_result to make 10 words
+            # np.random.shuffle(words)  # Shuffle to randomize the position
         else:
             words = np.random.choice(all_words, 10, replace=False)
 
