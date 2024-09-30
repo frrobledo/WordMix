@@ -14,7 +14,7 @@ def load_common_nouns(min_freq=5):
     # Get word frequencies from the Brown Corpus
     words = brown.words()
     freq_dist = nltk.FreqDist(w.lower() for w in words if w.isalpha())
-    
+
     # Filter for nouns using WordNet and frequency threshold
     common_words = set()
     for word, freq in freq_dist.items():
@@ -61,9 +61,18 @@ def main():
     all_embeddings = np.array([embeddings[word] for word in all_words])
 
     print("Welcome to the Word Mixing Game!")
+    previous_result = None  # Initialize previous result
     while True:
-        # Select 10 random words
-        words = np.random.choice(all_words, 10, replace=False)
+        # Select words for the current round
+        if previous_result and previous_result in embeddings:
+            # Exclude previous_result from random selection to avoid duplicates
+            available_words = set(all_words) - {previous_result}
+            words = np.random.choice(list(available_words), 9, replace=False)
+            words = np.append(words, previous_result)  # Add previous_result to make 10 words
+            np.random.shuffle(words)  # Shuffle to randomize the position
+        else:
+            words = np.random.choice(all_words, 10, replace=False)
+
         print("\nHere are your words:")
         for idx, word in enumerate(words, 1):
             print(f"{idx}: {word}")
@@ -93,6 +102,9 @@ def main():
                     sum_vec, embeddings, all_embeddings, all_words, exclude_words=[word1, word2]
                 )
                 print(f"The resulting word is: {result_word}")
+
+                # Update previous_result for the next round
+                previous_result = result_word
 
             except Exception as e:
                 print(f"Error: {e}. Please try again.")
