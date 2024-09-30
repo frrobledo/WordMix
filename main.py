@@ -47,6 +47,32 @@ def find_closest_word(target_vector, embeddings, all_embeddings, all_words, excl
     closest_word = all_words[idx]
     return closest_word
 
+def get_word_input(prompt, words, embeddings):
+    """Get valid word input from the user, either a number (1-10) or a custom word."""
+    while True:
+        user_input = input(prompt).strip()
+
+        # Check if the user wants to quit
+        if user_input.upper() == 'Q':
+            return 'Q'
+
+        # Check if the input is a number between 1 and 10
+        if user_input.isdigit():
+            num = int(user_input)
+            if 1 <= num <= 10:
+                return words[num - 1]  # Return the selected word
+            else:
+                print("Please enter a number between 1 and 10, or a valid word.")
+        
+        # Check if the input is a valid word in embeddings
+        elif user_input.isalpha():
+            if user_input in embeddings:
+                return user_input  # Return the custom word
+            else:
+                print(f"'{user_input}' is not in the vocabulary. Try a different word.")
+        else:
+            print("Invalid input. Please enter a number (1-10), a word, or 'Q' to quit.")
+
 def main():
     # Load common nouns and embeddings
     print("Loading common nouns and embeddings...")
@@ -68,7 +94,6 @@ def main():
             # Exclude previous_result from random selection to avoid duplicates
             available_words = set(all_words) - {previous_result}
             words = np.random.choice(list(available_words), 9, replace=False)
-            # Add the previous_result at the beginning of the list
             words = np.insert(words, 0, previous_result)
             # words = np.append(words, previous_result)  # Add previous_result to make 10 words
             # np.random.shuffle(words)  # Shuffle to randomize the position
@@ -79,37 +104,32 @@ def main():
         for idx, word in enumerate(words, 1):
             print(f"{idx}: {word}")
 
-        user_input = input("\nEnter two numbers between 1 and 10 to mix, or 'Q' to quit: ").strip()
-        if user_input.upper() == 'Q':
+        # Get inputs from the user
+        word1 = get_word_input("\nEnter the first word (number, word, or 'Q' to quit): ", words, embeddings)
+        if word1 == 'Q':
             print("Thanks for playing!")
             break
-        else:
-            try:
-                nums = user_input.replace(',', ' ').split()
-                if len(nums) != 2:
-                    raise ValueError("Please enter exactly two numbers.")
-                num1, num2 = int(nums[0]), int(nums[1])
-                if num1 < 1 or num1 > 10 or num2 < 1 or num2 > 10:
-                    raise ValueError("Numbers must be between 1 and 10.")
-                word1 = words[num1 - 1]
-                word2 = words[num2 - 1]
-                print(f"You selected: {word1} and {word2}")
 
-                vec1 = embeddings[word1]
-                vec2 = embeddings[word2]
-                sum_vec = vec1 + vec2
+        word2 = get_word_input("Enter the second word (number, word, or 'Q' to quit): ", words, embeddings)
+        if word2 == 'Q':
+            print("Thanks for playing!")
+            break
 
-                # Find the closest word, excluding the original words
-                result_word = find_closest_word(
-                    sum_vec, embeddings, all_embeddings, all_words, exclude_words=[word1, word2]
-                )
-                print(f"The resulting word is: {result_word}")
+        print(f"You selected: {word1} and {word2}")
 
-                # Update previous_result for the next round
-                previous_result = result_word
+        # Get embeddings for the selected words
+        vec1 = embeddings[word1]
+        vec2 = embeddings[word2]
+        sum_vec = vec1 + vec2
 
-            except Exception as e:
-                print(f"Error: {e}. Please try again.")
+        # Find the closest word, excluding the original words
+        result_word = find_closest_word(
+            sum_vec, embeddings, all_embeddings, all_words, exclude_words=[word1, word2]
+        )
+        print(f"The resulting word is: {result_word}")
+
+        # Update previous_result for the next round
+        previous_result = result_word
 
 if __name__ == "__main__":
     main()
