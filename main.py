@@ -9,6 +9,10 @@ nltk.download('wordnet')
 nltk.download('omw-1.4')
 nltk.download('brown')
 
+# Define word library
+# model = 'glove.6B.100d.txt'
+model = 'glove.42B.300d.txt'
+
 def load_common_nouns(min_freq=5):
     """Load a set of common English nouns based on frequency in the Brown Corpus."""
     # Get word frequencies from the Brown Corpus
@@ -76,11 +80,11 @@ def get_word_input(prompt, words, embeddings):
 def main():
     # Load common nouns and embeddings
     print("Loading common nouns and embeddings...")
-    nouns = load_common_nouns(min_freq=5)
-    embeddings = load_glove_embeddings('glove.6B.100d.txt', nouns)
+    nouns = load_common_nouns(min_freq=0)
+    embeddings = load_glove_embeddings(model, nouns)
 
     if not embeddings:
-        print("No embeddings loaded. Please ensure 'glove.6B.100d.txt' is in the current directory.")
+        print("No embeddings loaded.")
         return
 
     all_words = list(embeddings.keys())
