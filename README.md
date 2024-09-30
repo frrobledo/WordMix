@@ -31,14 +31,14 @@ In this game, you'll be presented with a list of 10 random nouns. You select any
 
    ```bash
    git clone https://github.com/frrobledo/WordMix
-   cd word-mixing-game
+   cd WordMix
    ```
 
 2. **Download GloVe Embeddings**
 
    - Download the pre-trained GloVe embeddings from the [GloVe website](https://nlp.stanford.edu/projects/glove/).
    - Specifically, download the `glove.6B.zip` file (~822 MB).
-   - Extract the file and place `glove.6B.100d.txt` in the `word-mixing-game` directory.
+   - Extract the file and place `glove.6B.100d.txt` in the `WordMix` directory.
 
 3. **Create a Virtual Environment (Optional but Recommended)**
 
