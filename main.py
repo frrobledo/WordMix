@@ -1,21 +1,28 @@
 import numpy as np
 import nltk
 from nltk.corpus import wordnet as wn
+from nltk.corpus import brown
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Download necessary NLTK data files
 nltk.download('wordnet')
 nltk.download('omw-1.4')
+nltk.download('brown')
 
-def load_nouns():
-    """Load a set of English nouns from WordNet."""
-    nouns = set()
-    for synset in wn.all_synsets('n'):
-        for lemma in synset.lemmas():
-            word = lemma.name()
-            if word.isalpha():
-                nouns.add(word.lower())
-    return nouns
+def load_common_nouns(min_freq=5):
+    """Load a set of common English nouns based on frequency in the Brown Corpus."""
+    # Get word frequencies from the Brown Corpus
+    words = brown.words()
+    freq_dist = nltk.FreqDist(w.lower() for w in words if w.isalpha())
+    
+    # Filter for nouns using WordNet and frequency threshold
+    common_words = set()
+    for word, freq in freq_dist.items():
+        if freq >= min_freq:
+            synsets = wn.synsets(word, pos=wn.NOUN)
+            if synsets:
+                common_words.add(word)
+    return common_words
 
 def load_glove_embeddings(glove_file_path, words_set):
     """Load GloVe embeddings for the specified set of words."""
@@ -41,26 +48,10 @@ def find_closest_word(target_vector, embeddings, all_embeddings, all_words, excl
     return closest_word
 
 def main():
-    # Load nouns and embeddings
-    """
-    Entry point for the Word Mixing Game.
-
-    This script will load a set of nouns and their corresponding GloVe embeddings,
-    then repeatedly prompt the user to select two numbers between 1 and 10 to mix.
-    The script will then calculate the sum of the two corresponding word embeddings,
-    and find the word in the original set that is closest to the resulting vector,
-    excluding the original two words. The closest word is then printed to the user.
-
-    The user may enter 'Q' to quit the game.
-    """
-    print("Loading nouns and embeddings...")
-    nouns = load_nouns()
-
-    try:
-        embeddings = load_glove_embeddings('glove.6B.100d.txt', nouns)
-    except FileNotFoundError:
-        print("Glove embeddings file not found. Please ensure 'glove.6B.100d.txt' is in the current directory.")
-        return
+    # Load common nouns and embeddings
+    print("Loading common nouns and embeddings...")
+    nouns = load_common_nouns(min_freq=5)
+    embeddings = load_glove_embeddings('glove.6B.100d.txt', nouns)
 
     if not embeddings:
         print("No embeddings loaded. Please ensure 'glove.6B.100d.txt' is in the current directory.")
@@ -75,7 +66,7 @@ def main():
         words = np.random.choice(all_words, 10, replace=False)
         print("\nHere are your words:")
         for idx, word in enumerate(words, 1):
-            print(f"{idx}): {word}")
+            print(f"{idx}: {word}")
 
         user_input = input("\nEnter two numbers between 1 and 10 to mix, or 'Q' to quit: ").strip()
         if user_input.upper() == 'Q':

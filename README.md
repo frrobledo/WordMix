@@ -86,25 +86,7 @@ In this game, you'll be presented with a list of 10 random nouns. You select any
 
 ## Example
 
-```plaintext
-Welcome to the Word Mixing Game!
-
-Here are your words:
-1: ocean
-2: computer
-3: music
-4: pirate
-5: internet
-6: code
-7: ship
-8: hacker
-9: treasure
-10: sea
-
-Enter two numbers between 1 and 10 to mix, or 'Q' to quit: 4 5
-You selected: pirate and internet
-The resulting word is: hacker
-```
+![screenshot of the game](Images/example.png)
 
 ## Dependencies
 
