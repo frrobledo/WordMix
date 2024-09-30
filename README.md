@@ -1,10 +1,10 @@
-# Word Mixing Game
+# WordMix
 
-Welcome to the **Word Mixing Game**! This is a simple command-line game where you mix two words together by combining their word embeddings. The game uses pre-trained GloVe embeddings to find a word that is semantically closest to the combination of your chosen words.
+Welcome to the **WordMix**! This is a simple command-line game where you mix two words together by combining their word embeddings. The game uses pre-trained GloVe embeddings to find a word that is semantically closest to the combination of your chosen words.
 
 ## Table of Contents
 
-- [Word Mixing Game](#word-mixing-game)
+- [WordMix](#wordmix)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Features](#features)
@@ -30,7 +30,7 @@ In this game, you'll be presented with a list of 10 random nouns. You select any
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/your_username/word-mixing-game.git
+   git clone https://github.com/frrobledo/WordMix
    cd word-mixing-game
    ```
 
